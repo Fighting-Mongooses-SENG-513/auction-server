@@ -1,11 +1,11 @@
-import express = require('express');
+import App from './app';
+import UserRoute from './routes/user';
 
-const app = express();
+const app = new App(
+    [
+        new UserRoute()
+    ],
+    3000
+);
 
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
-
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
-});
+app.listen();
