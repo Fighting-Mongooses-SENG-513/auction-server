@@ -1,11 +1,13 @@
 import express = require('express');
 import bodyParser = require('body-parser');
 import mongoose from 'mongoose';
+import morgan from 'morgan';
 
 class App {
+    // Replace this string to connect to a local dev database
+    private mongoConnection: string = 'mongodb+srv://fightingMongoose:02hGHEQ3WbO1mjIV@cluster0-wrbvu.mongodb.net/test?retryWrites=true&w=majority';
     public app: express.Application;
     public port: number;
-    public mongoConnection: string = 'mongodb+srv://fightingMongoose:02hGHEQ3WbO1mjIV@cluster0-wrbvu.mongodb.net/test?retryWrites=true&w=majority';
 
     constructor(routes: any[], port: number) {
         this.app = express();
@@ -17,6 +19,7 @@ class App {
     }
 
     private initMiddleware() {
+        this.app.use(morgan('dev'));
         this.app.use(bodyParser.json());
     }
 
