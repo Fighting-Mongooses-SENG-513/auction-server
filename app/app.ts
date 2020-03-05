@@ -21,6 +21,12 @@ class App {
     private initMiddleware() {
         this.app.use(morgan('dev'));
         this.app.use(bodyParser.json());
+        this.app.use((req, res, next) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+            next();
+        });
     }
 
     private initRoutes(routes: any[]) {

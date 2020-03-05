@@ -28,7 +28,7 @@ class UserRoute {
                     bcrypt.compare(req.body.password, user.password)
                         .then(result => {
                             if (!result) {
-                                return res.status(401).json({message: 'Not Authorized'});
+                                return res.status(401).json({message: 'Incorrect password.'});
                             } else {
                                 const token = jwt.sign({email: user.email, auctioneer: user.auctioneer},
                                                         this.jwtKey, 
