@@ -80,7 +80,7 @@ class AuctionRoute {
         });
 
         auction.save().then(result => {
-            return res.status(200).json(result);
+            return res.status(200).json({ result });
         }).catch(error => {
             console.error(error);
             return res.status(500).json({ message: 'Failed to save auction to DB' })
@@ -126,7 +126,7 @@ class AuctionRoute {
                 auction.currentHighestBidderEmail = bidderEmail;
 
                 auction.save().then(result => {
-                    return res.status(200).json(result);
+                    return res.status(200).json({ result });
                 }).catch(error => {
                     console.error(error);
                     return res.status(500).json({ message: 'failed to save auction to DB' });
