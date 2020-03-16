@@ -88,7 +88,7 @@ class AuctionRoute {
     }
 
     bid(req: express.Request, res: express.Response) {
-        const bid = req.body.bid;
+        let bid = req.body.bid;
         const auctionId = req.params.auctionId;
         const bidderEmail = req.body.bidderEmail;
 
@@ -108,17 +108,22 @@ class AuctionRoute {
         Auction.findById(auctionId).then(auction => {
             if (!auction) {
                 return res.status(400).json({ errors: ['no auction found'] });
-            } else if (auction && bid <= auction.currentBid) {
+            } else if (bid <= auction.currentBid) {
                 return res.status(400).json({ errors: ['bid must be greater than the auctions current bid'] });
-            } else if (auction && auction.endTime.getTime() < Date.now()) {
+            } else if (auction.endTime.getTime() < Date.now() || auction.winnerEmail) {
                 return res.status(400).json({ errors: ['bid cannot be placed on an auction that has ended'] });
             } else {
-                auction.currentBid = bid;
-                auction.currentHighestBidderEmail = bidderEmail;
+                if (auction.buyoutPrice && bid >= auction.buyoutPrice) {
+                    bid = auction.buyoutPrice;
+                    auction.winnerEmail = bidderEmail;
+                }
 
                 if (!auction.bidderEmailList.find(email => email === bidderEmail)) {
                     auction.bidderEmailList.push(bidderEmail);
                 }
+
+                auction.currentBid = bid;
+                auction.currentHighestBidderEmail = bidderEmail;
 
                 auction.save().then(result => {
                     return res.status(200).json(result);
