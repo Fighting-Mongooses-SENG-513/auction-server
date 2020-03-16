@@ -1,5 +1,6 @@
 import express = require('express');
 import Auction from '../models/auction.model';
+import { authMiddleware } from '../middleware/auth';
 
 class AuctionRoute {
     path = '/auctions';
@@ -10,9 +11,9 @@ class AuctionRoute {
     }
 
     initializeRoutes() {
-        this.router.get(this.path, this.index);
-        this.router.post(this.path, this.create);
-        this.router.post(`${this.path}/:auctionId/bid`, this.bid);
+        this.router.get(this.path, authMiddleware, this.index);
+        this.router.post(this.path, authMiddleware, this.create);
+        this.router.post(`${this.path}/:auctionId/bid`, authMiddleware, this.bid);
     }
 
     index(req: express.Request, res: express.Response) {
@@ -27,7 +28,6 @@ class AuctionRoute {
     }
 
     create(req: express.Request, res: express.Response) {
-        console.log(req.body);
         const name = req.body.name;
         const currentBid = req.body.currentBid;
         let buyoutPrice = req.body.buyoutPrice;
