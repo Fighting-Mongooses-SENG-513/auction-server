@@ -12,7 +12,7 @@ class UserRoute {
         this.initializeRoutes();
     }
 
-    public initializeRoutes() {
+    private initializeRoutes() {
         this.router.post(`${this.path}/login`, this.login);
         this.router.post(`${this.path}/create`, this.createUser);
     }
