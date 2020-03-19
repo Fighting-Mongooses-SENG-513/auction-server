@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface Auction extends Document {
     name: String,
+    auctioneerEmail: String;
     currentBid: Number,
     currentHighestBidderEmail: String,
     buyoutPrice?: Number,
@@ -14,6 +15,7 @@ export interface Auction extends Document {
 
 const AuctionSchema: Schema = new Schema({
     name: { type: String, required: true },
+    auctioneerEmail: { type: String, required: true },
     currentBid: { type: Number, required: true },
     currentHighestBidderEmail: { type: String },
     buyoutPrice: { type: Number },
