@@ -1,6 +1,7 @@
 import express = require('express');
 import jwt from 'jsonwebtoken';
 
+
 export const authMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const jwtKey = '9284C363EE96A915C7E4CEF9DBFD5';
     try {
@@ -9,6 +10,14 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
             return res.status(401).json({message: 'Not Authorized'});
         }
         jwt.verify(token, jwtKey);
+        
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace('-', '+').replace('_', '/');
+        const payload = JSON.parse(Buffer.from(base64, 'base64').toString('binary'));
+        
+        res.locals.auctioneer = payload.auctioneer;
+        res.locals.email = payload.email;
+
         next();
     } catch (error) {
         return res.status(401).json({
@@ -16,3 +25,4 @@ export const authMiddleware = (req: express.Request, res: express.Response, next
         });
     }
 };
+

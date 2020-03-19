@@ -17,18 +17,36 @@ class AuctionRoute {
     }
 
     index(req: express.Request, res: express.Response) {
-        Auction.find().then(result => {
-            return res.status(200).json({
-                result
+
+        let auctioneer = res.locals.auctioneer;
+        
+        if(auctioneer){
+            
+            Auction.find({ 'auctioneerEmail': res.locals.email }).then(result => {
+                return res.status(200).json({
+                    result
+                });
+            }).catch(error => {
+                console.error(error);
+                return res.status(500).json({ message: 'Failed to retrieve auctions from DB.' })
             });
-        }).catch(error => {
-            console.error(error);
-            return res.status(500).json({ mesasge: 'Failed to retrieve auctions from DB.' })
-        });
+
+        
+        } else {
+            Auction.find().then(result => {
+                return res.status(200).json({
+                    result
+                });
+            }).catch(error => {
+                console.error(error);
+                return res.status(500).json({ message: 'Failed to retrieve auctions from DB.' })
+            });
+        }
     }
 
     create(req: express.Request, res: express.Response) {
         const name = req.body.name;
+        const auctioneerEmail = res.locals.email;
         const currentBid = req.body.currentBid;
         let buyoutPrice = req.body.buyoutPrice;
         const endTime = Date.parse(req.body.endTime);
@@ -39,6 +57,10 @@ class AuctionRoute {
         const validationErrors = [];
         if (!name || typeof name !== 'string') {
             validationErrors.push('missing or invalid attribute: name');
+        }
+
+        if (!auctioneerEmail || typeof auctioneerEmail !== 'string') {
+            validationErrors.push('missing or invalid attribute: auctioneerEmail');
         }
 
         if ((!currentBid && currentBid !== 0.0) || typeof currentBid !== 'number') {
@@ -71,6 +93,7 @@ class AuctionRoute {
 
         const auction = new Auction({
             name,
+            auctioneerEmail,
             currentBid,
             buyoutPrice,
             endTime,
