@@ -175,8 +175,6 @@ class AuctionRoute {
                 });
             });
         });
-
-        console.log(`In Auction.endAuctions: ${new Date()}`)
     }
 }
 
