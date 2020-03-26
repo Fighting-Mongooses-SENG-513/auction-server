@@ -7,6 +7,9 @@ const app = new App(
         new UserRoute(),
         new AuctionRoute()
     ],
+    [
+        { function: AuctionRoute.endAuctions, interval: 10 * 1000 }
+    ],
     3000
 );
 

@@ -9,12 +9,13 @@ class App {
     public app: express.Application;
     public port: number;
 
-    constructor(routes: any[], port: number) {
+    constructor(routes: any[], jobs: any[], port: number) {
         this.app = express();
         this.port = port;
 
         this.initMiddleware();
         this.initRoutes(routes);
+        this.initJobs(jobs);
         this.initDB();
     }
 
@@ -32,6 +33,12 @@ class App {
     private initRoutes(routes: any[]) {
         routes.forEach(route => {
             this.app.use('/', route.router);
+        });
+    }
+
+    private initJobs(jobs: any[]) {
+        jobs.forEach(job => {
+            setInterval(job.function, job.interval);
         });
     }
 

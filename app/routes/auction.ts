@@ -19,9 +19,9 @@ class AuctionRoute {
     index(req: express.Request, res: express.Response) {
 
         let auctioneer = res.locals.auctioneer;
-        
+
         if(auctioneer){
-            
+
             Auction.find({ 'auctioneerEmail': res.locals.email }).then(result => {
                 return res.status(200).json({
                     result
@@ -31,7 +31,7 @@ class AuctionRoute {
                 return res.status(500).json({ message: 'Failed to retrieve auctions from DB.' })
             });
 
-        
+
         } else {
             Auction.find().then(result => {
                 return res.status(200).json({
@@ -49,7 +49,7 @@ class AuctionRoute {
         const auctioneerEmail = res.locals.email;
         const currentBid = req.body.currentBid;
         let buyoutPrice = req.body.buyoutPrice;
-        const endTime = Date.parse(req.body.endTime);
+        const auctionDays = req.body.auctionDays;
         const imageUrl = req.body.imageUrl;
         const tags = req.body.tags;
         const bidderEmailList: Array<String> = [];
@@ -71,8 +71,8 @@ class AuctionRoute {
             validationErrors.push('invalid attribute: buyoutPrice');
         }
 
-        if (!endTime || endTime < Date.now()) {
-            validationErrors.push('missing or invalid attribute: endTime');
+        if (!auctionDays || typeof auctionDays !== 'number' || auctionDays < 1) {
+            validationErrors.push('missing or invalid attribute: auctionDays');
         }
 
         if (!imageUrl) {
@@ -90,6 +90,9 @@ class AuctionRoute {
         }
 
         buyoutPrice = buyoutPrice ? buyoutPrice : null;
+
+        const endTime = new Date();
+        endTime.setDate(endTime.getDate() + auctionDays);
 
         const auction = new Auction({
             name,
@@ -158,6 +161,19 @@ class AuctionRoute {
         }).catch(error => {
             console.error(error);
             return res.status(500).json({ message: 'failed to retrieve auction from DB' });
+        });
+    }
+
+    static endAuctions() {
+        const currentTime = new Date();
+        Auction.find({endTime: {$lt: currentTime}, winnerEmail: null}).then((endedAuctions) => {
+            endedAuctions.forEach((auction) => {
+                const winnerEmail = auction.currentHighestBidderEmail ? auction.currentHighestBidderEmail : auction.auctioneerEmail;
+                auction.winnerEmail = winnerEmail;
+                auction.save().catch((error) => {
+                    console.error(error);
+                });
+            });
         });
     }
 }
