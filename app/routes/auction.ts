@@ -14,6 +14,7 @@ class AuctionRoute {
         this.router.get(this.path, authMiddleware, this.index);
         this.router.post(this.path, authMiddleware, this.create);
         this.router.post(`${this.path}/:auctionId/bid`, authMiddleware, this.bid);
+        this.router.post(`${this.path}/search`, authMiddleware, this.search);
     }
 
     index(req: express.Request, res: express.Response) {
@@ -162,6 +163,19 @@ class AuctionRoute {
             console.error(error);
             return res.status(500).json({ message: 'failed to retrieve auction from DB' });
         });
+    }
+    search(req: express.Request, res: express.Response) {
+        if (!req.body.search) {
+            return res.status(400).json({message: 'Bad Request'});
+        } else {
+            let query = {$text: {$search: req.body.search}};
+            Auction.find(query).then(result => {
+                return res.status(200).json({ result });
+            }).catch(error => {
+                console.error(error);
+                return res.status(500).json({message: 'Server Error'});
+            });
+        }
     }
 
     static endAuctions() {
