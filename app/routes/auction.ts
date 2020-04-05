@@ -116,15 +116,11 @@ class AuctionRoute {
     bid(req: express.Request, res: express.Response) {
         let bid = req.body.bid;
         const auctionId = req.params.auctionId;
-        const bidderEmail = req.body.bidderEmail;
+        const bidderEmail = res.locals.email;
 
         const validationErrors = [];
         if (!bid || typeof bid !== 'number') {
             validationErrors.push('missing or invalid attribute: bid');
-        }
-
-        if (!bidderEmail || typeof bidderEmail !== 'string') {
-            validationErrors.push('missing or invalid attribute: bidderEmail');
         }
 
         if (validationErrors.length > 0) {
