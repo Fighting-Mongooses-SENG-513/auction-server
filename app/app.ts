@@ -45,6 +45,10 @@ class App {
         });
     }
 
+    public addJob(job: any) {
+        setInterval(job.function, job.interval);
+    }
+
     private initDB() {
         mongoose.Promise = global.Promise;
         mongoose.connect(this.mongoConnection, {

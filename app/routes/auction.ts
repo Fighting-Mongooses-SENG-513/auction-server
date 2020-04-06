@@ -177,7 +177,7 @@ class AuctionRoute {
         }
     }
 
-    static endAuctions() {
+    static endAuctions( app: express.Application ) {
         const currentTime = new Date();
         Auction.find({endTime: {$lt: currentTime}, winnerEmail: null}).then((endedAuctions) => {
             endedAuctions.forEach((auction) => {
@@ -187,6 +187,9 @@ class AuctionRoute {
                     console.error(error);
                 });
             });
+            if (endedAuctions.length > 0 && app.locals.socketServer){
+                app.locals.socketServer.emit('update');
+            }
         });
     }
 }
