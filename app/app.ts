@@ -6,7 +6,7 @@ import morgan from 'morgan';
 
 class App {
     // Replace this string to connect to a local dev database
-    private mongoConnection: string = 'mongodb+srv://kblais:kblais@cluster0-skds1.mongodb.net/test?retryWrites=true&w=majority';
+    private mongoConnection: string = 'mongodb+srv://fightingMongoose:02hGHEQ3WbO1mjIV@cluster0-wrbvu.mongodb.net/test?retryWrites=true&w=majority';
     public app: express.Application;
     public port: number;
 
