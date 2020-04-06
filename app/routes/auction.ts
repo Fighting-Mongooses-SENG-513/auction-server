@@ -150,6 +150,7 @@ class AuctionRoute {
                 auction.currentHighestBidderEmail = bidderEmail;
 
                 auction.save().then(result => {
+                    req.app.locals.socketServer.emit('update');
                     return res.status(200).json({ result });
                 }).catch(error => {
                     console.error(error);
