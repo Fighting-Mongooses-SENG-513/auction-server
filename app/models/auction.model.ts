@@ -14,7 +14,7 @@ export interface Auction extends Document {
 }
 
 const AuctionSchema: Schema = new Schema({
-    name: { type: String, required: true },
+    name: { type: String, text: true, required: true },
     auctioneerEmail: { type: String, required: true },
     currentBid: { type: Number, required: true },
     currentHighestBidderEmail: { type: String },
