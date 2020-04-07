@@ -7,7 +7,7 @@ class UserRoute {
     private jwtKey = '9284C363EE96A915C7E4CEF9DBFD5' // Never do this in real life
     public path = '/user';
     public router = express.Router();
-
+    
     constructor() {
         this.initializeRoutes();
     }

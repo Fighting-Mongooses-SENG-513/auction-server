@@ -105,8 +105,9 @@ class AuctionRoute {
             tags,
             bidderEmailList
         });
-
+        
         auction.save().then(result => {
+            req.app.locals.socketServer.emit('update');
             return res.status(200).json({ result });
         }).catch(error => {
             console.error(error);
@@ -149,6 +150,7 @@ class AuctionRoute {
                 auction.currentHighestBidderEmail = bidderEmail;
 
                 auction.save().then(result => {
+                    req.app.locals.socketServer.emit('update');
                     return res.status(200).json({ result });
                 }).catch(error => {
                     console.error(error);
@@ -160,6 +162,7 @@ class AuctionRoute {
             return res.status(500).json({ message: 'failed to retrieve auction from DB' });
         });
     }
+    
     search(req: express.Request, res: express.Response) {
         if (!req.body.search) {
             return res.status(400).json({message: 'Bad Request'});
@@ -174,7 +177,7 @@ class AuctionRoute {
         }
     }
 
-    static endAuctions() {
+    static endAuctions( app: express.Application ) {
         const currentTime = new Date();
         Auction.find({endTime: {$lt: currentTime}, winnerEmail: null}).then((endedAuctions) => {
             endedAuctions.forEach((auction) => {
@@ -184,6 +187,9 @@ class AuctionRoute {
                     console.error(error);
                 });
             });
+            if (endedAuctions.length > 0 && app.locals.socketServer){
+                app.locals.socketServer.emit('update');
+            }
         });
     }
 }

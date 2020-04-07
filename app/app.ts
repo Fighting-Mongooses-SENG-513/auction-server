@@ -3,11 +3,13 @@ import bodyParser = require('body-parser');
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 
+
 class App {
     // Replace this string to connect to a local dev database
     private mongoConnection: string = 'mongodb+srv://fightingMongoose:02hGHEQ3WbO1mjIV@cluster0-wrbvu.mongodb.net/test?retryWrites=true&w=majority';
     public app: express.Application;
     public port: number;
+
 
     constructor(routes: any[], jobs: any[], port: number) {
         this.app = express();
@@ -17,6 +19,7 @@ class App {
         this.initRoutes(routes);
         this.initJobs(jobs);
         this.initDB();
+
     }
 
     private initMiddleware() {
@@ -42,6 +45,10 @@ class App {
         });
     }
 
+    public addJob(job: any) {
+        setInterval(job.function, job.interval);
+    }
+
     private initDB() {
         mongoose.Promise = global.Promise;
         mongoose.connect(this.mongoConnection, {
@@ -57,7 +64,7 @@ class App {
     }
 
     public listen() {
-        this.app.listen(this.port, () => {
+        return this.app.listen(this.port, () => {
             console.log('Server running on port ' + this.port);
         });
     }
